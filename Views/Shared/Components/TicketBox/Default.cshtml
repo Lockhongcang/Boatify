@@ -1,0 +1,146 @@
+﻿@model Boatify.Models.ViewModels.TicketBoxViewModel
+
+<section class="position-relative">
+    <div class="container position-absolute">
+        <div id="homeCarousel" class="carousel slide d-none d-md-block" data-bs-ride="carousel" data-bs-interval="5000">
+            <div class="carousel-inner">
+                <div class="carousel-item active home-carousel-item" style="background-image: url('https://images.unsplash.com/photo-1579121100057-aa5ad13cf46c?q=80&w=2008');">
+                    <div class="carousel-overlay"></div>
+                    <div class="carousel-caption d-none d-md-block home-caption">
+                        <p class="m-0">ELEVATE YOUR TRAVEL JOURNEY</p>
+                        <h2>Experience The Magic Of Flight!</h2>
+                        <a class="btn btn-search" asp-controller="Booking" asp-action="Index">Đặt ngay !</a>
+                    </div>
+                </div>
+                <div class="carousel-item home-carousel-item" style="background-image: url('https://images.unsplash.com/photo-1741319717047-c5c45ae5ed78?q=80&w=2070');">
+                    <div class="carousel-overlay"></div>
+                    <div class="carousel-caption d-none d-md-block home-caption">
+                        <p class="m-0">DISCOVER NEW DESTINATIONS</p>
+                        <h2>Fly With Comfort And Style!</h2>
+                        <a class="btn btn-search" asp-controller="Booking" asp-action="Index">Khám phá ngay!</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+                <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="1"></button>
+            </div>
+        </div>
+
+        <form method="get" id="ticketForm" asp-controller="Booking" asp-action="Index">
+            <div class="ticket-box">
+                <!-- Một chiều / Khứ hồi -->
+                <div class="ticket-options d-flex justify-content-start align-items-center mb-3">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="tripType" id="oneWay" checked>
+                        <label class="form-check-label fw-semibold" for="oneWay">Một chiều</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="tripType" id="roundTrip">
+                        <label class="form-check-label fw-semibold" for="roundTrip">Khứ hồi</label>
+                    </div>
+                </div>
+
+                <!-- 4 ô trong 1 row (desktop) | chia 2-2 (mobile) -->
+                <div class="row g-3">
+                    <div class="location__group col-12 col-sm-12 col-lg-6 d-flex align-items-center gap-3">
+                        <!-- Điểm đi -->
+                        <div class="flex-fill left">
+                            <label class="form-label fw-medium">Điểm đi</label>
+                            <select name="departure" class="form-select fw-medium" >
+                                <option value="">Chọn điểm đi</option>
+                                @foreach (var item in Model.Departures)
+                                {
+                                    if (item == Model.SelectedDeparture)
+                                    {
+                                        <option value="@item" selected>@item</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item">@item</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Điểm đến -->
+                        <div class="flex-fill text-end text-lg-start">
+                            <label class="form-label fw-medium destination">Điểm đến</label>
+                            <select name="destination" class="form-select fw-medium destination" >
+                                <option value="">Chọn điểm đến</option>
+                                @foreach (var item in Model.Destinations)
+                                {
+                                    if (item == Model.SelectedDestination)
+                                    {
+                                        <option value="@item" selected>@item</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item">@item</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <span class="material-symbols-rounded swap_horiz">swap_horiz</span>
+                    </div>
+
+                    <div class="mt-4 border-top d-block d-lg-none"></div>
+
+                    <!-- Ngày đi -->
+                    <div class="col-6 col-sm-6 col-lg-3">
+                        <label asp-for="SelectedDate" class="form-label fw-medium">Ngày đi</label>
+
+                        <div class="input-group datetimepicker" id="dpDepart" data-td-target-input="nearest">
+                            <input asp-for="SelectedDate"
+                                   name="date"
+                                   type="text"
+                                   class="form-control"
+                                   data-td-target="#dpDepart"
+                                   placeholder="Chọn ngày" />
+                            <span class="input-group-text"
+                                  data-td-toggle="datetimepicker"
+                                  data-td-target="#dpDepart">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#555555"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-40q0-17 11.5-28.5T280-880q17 0 28.5 11.5T320-840v40h320v-40q0-17 11.5-28.5T680-880q17 0 28.5 11.5T720-840v40h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z" /></svg>
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <!-- Ngày về -->
+                    <div class="col-6 col-sm-6 col-lg-3" id="returnDateGroup">
+                        <label asp-for="ReturnDate" class="form-label fw-medium">Ngày về</label>
+
+                        <div class="input-group datetimepicker" id="dpReturn" data-td-target-input="nearest">
+                            <input asp-for="ReturnDate"
+                                   name="returnDate"
+                                   type="text"
+                                   class="form-control"
+                                   data-td-target="#dpReturn"
+                                   placeholder="Chọn ngày" />
+                            <span class="input-group-text"
+                                  data-td-toggle="datetimepicker"
+                                  data-td-target="#dpReturn">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#555555"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-40q0-17 11.5-28.5T280-880q17 0 28.5 11.5T320-840v40h320v-40q0-17 11.5-28.5T680-880q17 0 28.5 11.5T720-840v40h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z" /></svg>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 border-top d-none d-xxl-block"></div>
+
+                <!-- Recent searches -->
+                <div class="recent-searches recent-searches-desktop mt-4">
+                    <label class="d-block mb-2">Tìm kiếm gần đây</label>
+                    <div id="recentSearchList"></div>
+                </div>
+
+                <!-- Search button -->
+                <div class="text-center mt-4 position-relative">
+                    <button type="submit" class="btn btn-search-lg position-absolute">
+                        Tìm chuyến xe
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

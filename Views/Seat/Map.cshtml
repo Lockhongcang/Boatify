@@ -1,0 +1,453 @@
+﻿@{
+    ViewData["Title"] = "Chọn ghế";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var seatsJson = System.Text.Json.JsonSerializer.Serialize(Model);
+}
+
+@section Styles {
+    <link href="~/css/Seatmap.css" rel="stylesheet" />
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Cột trái: Chọn ghế -->
+        <div class="col-lg-8">
+            <div class="trip-card">
+                <h5>Chọn ghế</h5>
+                <hr class="my-4" />
+
+                <ul class="nav nav-tabs deck-tabs mb-3" id="deckTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="main-tab" data-bs-toggle="tab" data-bs-target="#deck-main" type="button" role="tab" aria-controls="deck-main" aria-selected="true">
+                            BOONG CHÍNH
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="up-tab" data-bs-toggle="tab" data-bs-target="#deck-up" type="button" role="tab" aria-controls="deck-up" aria-selected="false">
+                            BOONG TRÊN
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="deck-main" role="tabpanel" aria-labelledby="main-tab">
+                        <div class="deck-scroll">
+                            <div class="deck-grid" id="deck-main-grid"></div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="deck-up" role="tabpanel" aria-labelledby="up-tab">
+                        <div class="deck-scroll">
+                            <div class="deck-grid" id="deck-up-grid"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="trip-card">
+                <h5>Thông tin hành khách</h5>
+                <div class="accordion mt-3" id="passengerInfo"></div>
+            </div>
+
+            <div class="trip-card d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h5 id="total-price">0đ</h5>
+                <div class="d-flex gap-2">
+                    <button class="cancel-button">Hủy</button>
+                    <button class="booking-button" onclick="submitSeats()">Thanh toán</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột phải: Thông tin -->
+        <div class="col-lg-4">
+            <div class="filter-sidebar">
+                <h5 class="fw-bold mb-2">Ký hiệu ghế</h5>
+                <div class="d-flex gap-4">
+                    <div class="legend mt-3 ">
+                        <div><span class="available"></span> Trống</div>
+                        <div><span class="selected"></span> Đang chọn</div>
+                    </div>
+
+                    <div class="legend mt-3 ">
+                        <div><span class="booked"></span> Đã đặt</div>
+                        <div><span class="hold"></span> Giữ chỗ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-sidebar mt-4">
+                <h5 class="fw-bold mb-2">Thông tin lượt đi</h5>
+                <ul class="list-unstyled">
+                    <li class="text-type d-flex justify-content-between">
+                        <span>Tuyến tàu</span>
+                        <span class="title-modal">@ViewBag.Departure - @ViewBag.Destination</span>
+                    </li>
+                    <li class="text-type d-flex justify-content-between">
+                        <span>Thời gian xuất bến:</span>
+                        <span class="text-green">
+                            @((ViewBag.Date as DateTime?)?.ToString("dd/MM/yyyy"))
+                        </span>
+                    </li>
+                    <li class="text-type d-flex justify-content-between">
+                        <span>Số lượng ghế:</span>
+                        <span class="title-modal">@((Model?.Count ?? 0)) Ghế</span>
+                    </li>
+                    <li class="text-type d-flex justify-content-between">
+                        <span>Số ghế:</span>
+                        <span id="selected-seats" class="text-green">chưa chọn</span>
+                    </li>
+                </ul>
+            </div>
+
+
+            <div class="filter-sidebar mt-4">
+                <h5 class="fw-bold mb-2 d-flex align-items-center gap-1">
+                    Chi tiết giá
+                    <span class="info-icon" data-bs-toggle="tooltip" title="Giá vé bao gồm VAT. Vé đã mua không hoàn, không đổi.">
+                        <span class="material-symbols-rounded">info</span>
+                    </span>
+                </h5>
+                <ul class="list-unstyled">
+                    <li class="text-type d-flex justify-content-between"><span>Giá vé lượt đi:</span> <span class="price">0đ</span></li>
+                    <li class="text-type d-flex justify-content-between"><span>Phí thanh toán:</span> <span class="text-type">0đ</span></li>
+                    <hr class="my-1" />
+                    <li class="mt-2 text-green d-flex justify-content-between fw-semibold"><span>Tổng tiền:</span> <span class="price">0đ</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let selectedSeats = new Set(); // Danh sách ghế đã chọn
+        let selectedSeatsInfo = [];    // Lưu thông tin CCCD của các ghế đã chọn
+
+        // Hàm kiểm tra tính hợp lệ của CCCD
+        function validateCCCD(cccd) {
+            const cccdRegex = /^\d{12}$/;  // Kiểm tra CCCD có đúng 12 ký tự số
+            if (!cccdRegex.test(cccd)) {
+                return "CCCD phải là 12 chữ số.";
+            }
+            return null;  // Không có lỗi
+        }
+
+        // Kiểm tra xem CCCD đã được chọn chưa
+        function isCCCDDuplicate(cccd) {
+            // Kiểm tra nếu CCCD đã được sử dụng trong danh sách ghế đã chọn
+            return selectedSeatsInfo.some(seat => seat.cccd === cccd);
+        }
+
+        // Hàm tự động điền thông tin từ CCCD
+        function autoFillInfo(code) {
+            const cccdElement = document.getElementById(`id-${code}`);
+            if (!cccdElement) {
+                console.error("Không tìm thấy phần tử với id: id-" + code);
+                return;
+            }
+
+            const cccd = cccdElement.value;
+
+            // Kiểm tra độ dài và định dạng của CCCD
+            const errorMessage = validateCCCD(cccd);
+            if (errorMessage) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: errorMessage,
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                return;
+            }
+
+            // Kiểm tra trùng lặp CCCD
+            if (isCCCDDuplicate(cccd)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: `CCCD ${cccd} đã được sử dụng cho ghế khác.`,
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                return;
+            }
+
+            // Tự động điền thông tin vào các trường (giả sử dữ liệu được nhập tay, không có API)
+            document.getElementById(`name-${code}`).value = "Người dùng " + cccd;  // Ví dụ giả định tên người dùng
+            document.getElementById(`dob-${code}`).value = "01/01/2000";  // Ví dụ giả định ngày sinh
+        }
+
+        // Cập nhật danh sách ghế đã chọn với CCCD
+        function updateSelectedSeatsInfo(code, cccd) {
+            selectedSeatsInfo.push({ seatCode: code, cccd: cccd });
+        }
+
+        // Hàm khi chọn ghế
+        function toggleSelect(seat, el) {
+            const code = seat.SeatNm;
+
+            if (selectedSeats.has(code)) {
+                selectedSeats.delete(code);
+                el.classList.remove("selected");
+                const panel = document.getElementById("panel-" + code);
+                if (panel) panel.remove();
+
+                // Xóa thông tin ghế khỏi selectedSeatsInfo
+                const cccdElement = document.getElementById(`id-${code}`);
+                if (cccdElement) {
+                    const cccd = cccdElement.value;
+                    selectedSeatsInfo = selectedSeatsInfo.filter(seat => seat.cccd !== cccd);
+                }
+            } else {
+                if (selectedSeats.size >= 10) return alert("Chỉ được chọn tối đa 10 ghế.");
+                selectedSeats.add(code);
+                el.classList.add("selected");
+
+                // Lưu thông tin ghế vào selectedSeatsInfo
+                const cccdElement = document.getElementById(`id-${code}`);
+                if (cccdElement) {
+                    const cccd = cccdElement.value;
+                    updateSelectedSeatsInfo(code, cccd);
+                }
+
+                // Hiển thị thông tin hành khách khi chọn ghế
+                document.getElementById("passengerInfo").insertAdjacentHTML("beforeend", renderPassengerCard(code));
+
+                // Cập nhật số ghế đã chọn
+                document.getElementById("selected-seats").innerText = [...selectedSeats].join(', ') || 'chưa chọn';
+            }
+
+            // Cập nhật lại giá
+            updateTotalPrice();
+        }
+
+        // Hàm xóa ghế đã chọn
+        function removeSeat(code) {
+            selectedSeats.delete(code);
+            const panel = document.getElementById("panel-" + code);
+            if (panel) panel.remove();
+
+            const seatEl = [...document.querySelectorAll('.seat')].find(el => el.innerText === code);
+            if (seatEl) seatEl.classList.remove("selected");
+
+            document.getElementById("selected-seats").innerText = [...selectedSeats].join(', ') || 'chưa chọn';
+
+            // Xóa thông tin ghế khỏi selectedSeatsInfo
+            const cccdElement = document.getElementById(`id-${code}`);
+            if (cccdElement) {
+                const cccd = cccdElement.value;
+                selectedSeatsInfo = selectedSeatsInfo.filter(seat => seat.cccd !== cccd);
+            }
+
+            updateTotalPrice();
+        }
+
+        // Hàm render thông tin hành khách cho mỗi ghế
+        function renderPassengerCard(code) {
+            const fieldId = "dob-field-" + code;  // Tạo fieldId duy nhất cho mỗi ghế
+
+            return `
+                <div class="passenger-card mb-3" id="panel-${code}">
+                    <div class="passenger-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-semibold">Ghế ${code}</h6>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="ticket-badge" id="type-${code}">Loại vé: Người lớn</span>
+                            <button class="btn-icon" onclick="removeSeat('${code}')">
+                                <span class="material-symbols-rounded">close</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="px-3 py-4">
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Căn cước công dân</label>
+                                <input type="text" class="form-control custom-input" name="id-${code}" id="id-${code}" oninput="autoFillInfo('${code}')">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control custom-input" required name="name-${code}" id="name-${code}">
+                            </div>
+                        </div>
+                        <div class="row gx-3">
+                          <div class="col-md-6">
+                              <label class="form-label">Số điện thoại</label>
+                              <input type="tel" class="form-control custom-input" name="phone-${code}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Ngày sinh</label>
+                                <div class="input-group datetimepicker" id="${fieldId}" data-td-target-input="nearest">
+                                    <input type="text"
+                                           name="dob-${code}"
+                                           class="form-control"
+                                           data-td-target="#${fieldId}"
+                                           placeholder="Chọn ngày sinh"
+                                           id="dob-${code}"
+                                           onchange="updateTicketType('${code}')"/>
+                                    <span class="input-group-text"
+                                          data-td-toggle="datetimepicker"
+                                          data-td-target="#${fieldId}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#555555"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-40q0-17 11.5-28.5T280-880q17 0 28.5 11.5T320-840v40h320v-40q0-17 11.5-28.5T680-880q17 0 28.5 11.5T720-840v40h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z"/></svg>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function calculateAge(dob) {
+          const diff = Date.now() - dob.getTime();
+          const year = new Date(diff).getUTCFullYear();
+          return Math.abs(year - 1970);
+        }
+
+        function updateTotalPrice() {
+          let total = 0;
+          selectedSeats.forEach(code => {
+            const seat = seats.find(s => s.SeatNm === code);
+            if (!seat) return;
+            // Xác định hệ số theo ngày sinh
+            let multiplier = 1;
+            const dobInput = document.querySelector(`[name="dob-${code}"]`);
+            if (dobInput?.value) {
+              const age = calculateAge(new Date(dobInput.value));
+              if (age <= 11) multiplier = 0.5;
+              else if (age >= 60) multiplier = 0.8;
+            }
+            total += (seat.TicketPriceWithVAT || 0) * multiplier;
+          });
+
+          // Cập nhật tổng giá
+          document.getElementById("total-price").innerText = total.toLocaleString('vi-VN') + "đ";
+          document.querySelectorAll(".price").forEach(el => {
+            el.innerText = total.toLocaleString('vi-VN') + "đ";
+          });
+        }
+
+        function updateTotalPrice(multiplier = 1, code = "") {
+            let total = 0;
+
+            for (const code of selectedSeats) {
+                const seat = seats.find(s => s.SeatNm === code);
+                if (seat) {
+                    total += (seat.TicketPriceWithVAT || 0) * multiplier;
+                }
+            }
+
+            document.getElementById("total-price").innerText = total.toLocaleString('vi-VN') + "đ";
+
+            document.querySelectorAll(".price").forEach(el => {
+                el.innerText = total.toLocaleString('vi-VN') + "đ";
+            });
+        }
+
+        // function removeSeat(code) {
+        //     selectedSeats.delete(code);
+        //     const panel = document.getElementById("panel-" + code);
+        //     if (panel) panel.remove();
+
+        //     const seatEl = [...document.querySelectorAll('.seat')].find(el => el.innerText === code);
+        //     if (seatEl) seatEl.classList.remove("selected");
+
+        //     document.getElementById("selected-seats").innerText = [...selectedSeats].join(', ') || 'chưa chọn';
+
+        //     updateTotalPrice();
+        // }
+
+        // function submitSeats() {
+        //     if (selectedSeats.size === 0) return alert("Bạn chưa chọn ghế nào.");
+        //     alert("Bạn đã chọn: " + [...selectedSeats].join(', '));
+        // }
+
+        const seats = @Html.Raw(seatsJson); // Serialize Model data to JS
+
+        function renderSeatMap(data) {
+                const deckMain = document.getElementById("deck-main-grid");
+                const deckUp   = document.getElementById("deck-up-grid");
+                const upTab    = document.getElementById("up-tab").parentElement;
+
+                deckMain.innerHTML = '';
+                deckUp.innerHTML   = '';
+                upTab.style.display = 'inline-block';
+
+                // Boong chính = 0, Boong trên = 1
+                [0, 1].forEach(boong => {
+                    const target   = (boong === 0 ? deckMain : deckUp);
+                    const filtered = data.filter(s => s.IsUpStair === boong);
+
+                    // Nếu boong trên == 1 mà không có ghế, ẩn tab
+                    if (boong === 1 && filtered.length === 0) {
+                        upTab.style.display = 'none';
+                        return;
+                    }
+
+                    // Tìm maxRow (số “hàng ngang”) và maxCol (số “hàng dọc”)
+                    const maxRow = Math.max(...filtered.map(s => s.Row));
+                    const maxCol = Math.max(...filtered.map(s => s.Col));
+
+                    // Thiết lập CSS Grid:
+                    //    → maxCol cột dọc (gridTemplateRows), maxRow cột ngang (gridTemplateColumns)
+                    target.style.display            = "grid";
+                    target.style.gridTemplateColumns = `repeat(${maxRow}, 1fr)`;
+                    target.style.gridTemplateRows    = `repeat(${maxCol}, 1fr)`;
+
+                    // Tạo map key = "Col-Row" → seat object
+                    const positionMap = new Map();
+                    filtered.forEach(seat => {
+                        positionMap.set(`${seat.Col}-${seat.Row}`, seat);
+                    });
+
+                    // Vẽ từng ô (đảo ngược c để Row = 1 nằm bên phải,
+                    //             đảo ngược r để Col = 1 nằm ở dưới cùng)
+                    for (let c = maxRow; c >= 1; c--) {
+                        for (let r = 1; r <= maxCol; r++) {
+                            const seat = positionMap.get(`${r}-${c}`);
+                            const div  = document.createElement("div");
+                            div.classList.add("seat");
+
+                            if (!seat || seat.IsSeat === false) {
+                                // Nếu không phải ghế → chỉ là khoảng trống
+                                div.classList.add("space");
+                            } else {
+                                // Gán class tuỳ tình trạng ghế
+                                if (seat.IsBooked) {
+                                    div.classList.add("booked");
+                                } else if (seat.IsHeld) {
+                                    div.classList.add("hold");
+                                } else {
+                                    div.classList.add("available");
+                                }
+
+                                div.innerText     = seat.SeatNm;
+                                div.title         = `${seat.TicketClass || 'Thường'}`;
+                                div.dataset.seatId = seat.SeatId;
+                                div.dataset.price  = seat.TicketPriceWithVAT;
+                                div.onclick        = () => toggleSelect(seat, div);
+                            }
+
+                            // gridRow đảo ngược: hàng Col = 1 → gridRow = maxCol (xuống cuối),
+                            //                   hàng Col = maxCol → gridRow = 1 (lên đầu)
+                            div.style.gridRow = (maxCol - r + 1);
+
+                            // gridColumn đảo ngược: Row = 1 → gridColumn = maxRow (sang phải),
+                            //                      Row = maxRow → gridColumn = 1 (sang trái)
+                            div.style.gridColumn = (maxRow - c + 1);
+
+                            target.appendChild(div);
+                        }
+                    }
+                });
+            }   
+        document.addEventListener("DOMContentLoaded", function () {
+            renderSeatMap(seats);
+        });
+
+    </script>
+}

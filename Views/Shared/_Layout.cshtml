@@ -1,0 +1,237 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Boatify</title>
+    <link rel="icon" href="@Url.Content("~/favicon.ico")" type="image/x-icon" />
+    <meta name="description" content="Boatify - Dịch vụ vé tàu đáng tin cậy của bạn." />
+
+    <!-- CSS -->
+    <link href="~/css/Home.css" rel="stylesheet" />
+    <link href="~/css/Toast.css" rel="stylesheet" />
+
+    <!-- CDN -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Tempus Dominus CSS -->
+    <link href="~/lib/eonasdan/tempus-dominus/dist/css/tempus-dominus.min.css" rel="stylesheet" />
+
+    <script src="~/lib/popperjs/core/dist/umd/popper.min.js"></script>
+    <script src="~/lib/eonasdan/tempus-dominus/dist/js/tempus-dominus.min.js"></script>
+    <script src="~/js/tempus-init.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    @RenderSection("Styles", required: false)
+
+</head>
+<body>
+    <!-- Navbar -->
+    @{
+        var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+        var action = ViewContext.RouteData.Values["action"]?.ToString();
+        var isSeatMapPage = controller == "Seat" && action == "Map";
+    }
+
+    <header class="navbar__header">
+        <div class="navbar__container">
+            @if (!isSeatMapPage)
+            {
+                <!-- Navbar Top -->
+                <nav class="navbar navbar-expand-lg px-4 py-3 bg-transparent text-white">
+                    <div class="container d-flex justify-content-between align-items-center w-100">
+
+                        <!-- Nút Hamburger -->
+                        <button class="navbar-toggler navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-label="Toggle navigation">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px"
+                                 fill="#f6f6f6">
+                                <path d="M160-240q-17 0-28.5-11.5T120-280q0-17 11.5-28.5T160-320h640q17 0 28.5 11.5T840-280q0 17-11.5 28.5T800-240H160Zm0-200q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520h640q17 0 28.5 11.5T840-480q0 17-11.5 28.5T800-440H160Zm0-200q-17 0-28.5-11.5T120-680q0-17 11.5-28.5T160-720h640q17 0 28.5 11.5T840-680q0 17-11.5 28.5T800-640H160Z" />
+                            </svg>
+                        </button>
+
+                        <!-- Offcanvas Sidebar -->
+                        <div class="sidebar offcanvas offcanvas-start d-lg-none" tabindex="-1" id="sidebarMenu"
+                             aria-labelledby="sidebarMenuLabel">
+                            <div class="offcanvas-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item p-1 border-0">
+                                        <a class="nav-link py-1 px-2 d-block active" asp-controller="Home" asp-action="Index">TRANG CHỦ</a>
+                                    </li>
+                                    <li class="list-group-item p-0 border-0"><hr class="my-1"></li>
+                                    <li class="list-group-item p-1 border-0"><a class="nav-link py-1 px-2 d-block" href="#">LỊCH TRÌNH</a></li>
+                                    <li class="list-group-item p-0 border-0"><hr class="my-1"></li>
+                                    <li class="list-group-item p-1 border-0"><a class="nav-link py-1 px-2 d-block" asp-controller="Booking" asp-action="Index">TRA CỨU VÉ</a></li>
+                                    <li class="list-group-item p-0 border-0"><hr class="my-1"></li>
+                                    <li class="list-group-item p-1 border-0"><a class="nav-link py-1 px-2 d-block" href="#">LIÊN HỆ</a></li>
+                                    <li class="list-group-item p-0 border-0"><hr class="my-1"></li>
+                                    <li class="list-group-item p-1 border-0"><a class="nav-link py-1 px-2 d-block" href="#">VỀ CHÚNG TÔI</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Logo mobile -->
+                        <a class="navbar-brand mx-auto d-lg-none" asp-controller="Home" asp-action="Index">
+                            <img src="@Url.Content("~/assets/Boatify_logo_header-sm.png")" class="logo-header sm">
+                        </a>
+
+                        <!-- Dropdown User (mobile only) -->
+                        <div class="account__container dropdown d-lg-none">
+                            <button class="btn btn-transparent" type="button" id="userMenu" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px"
+                                     fill="#ef5222" class="account__icon">
+                                    <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-240v-32q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v32q0 33-23.5 56.5T720-160H240q-33 0-56.5-23.5T160-240Z" />
+                                </svg>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                                @if (Context.Session.GetString("UserEmail") != null)
+                                {
+                                    <li class="dropdown-item">@Context.Session.GetString("UserEmail")</li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Login">Đăng nhập</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Register">Đăng ký</a></li>
+                                }
+                            </ul>
+                        </div>
+
+                        <!-- Login/Register (desktop only) -->
+                        <div class="account__container d-none d-lg-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                 fill="#f6f6f6" class="account__icon p-1 me-1">
+                                <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-240v-32q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v32q0 33-23.5 56.5T720-160H240q-33 0-56.5-23.5T160-240Z" />
+                            </svg>
+
+                            @if (Context.Session.GetString("UserEmail") != null)
+                            {
+                                <span class="text-white pe-2 small">@Context.Session.GetString("UserEmail")</span>
+                                <a class="btn btn-transparent p-1" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-transparent p-1" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                                <a class="btn btn-transparent p-1" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                            }
+                        </div>
+
+                        <!-- Logo desktop -->
+                        <a class="navbar-brand fw-bold mx-auto d-none d-lg-block position-absolute start-50 translate-middle-x top-0"
+                           asp-controller="Home" asp-action="Index">
+                            <img src="@Url.Content("~/assets/logo_header.svg")" class="logo-header">
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- Navbar Bottom -->
+                <nav class="navbar navbar-expand-lg px-4 py-2 bg-transparent">
+                    <div class="container">
+                        <div class="collapse navbar-collapse justify-content-center" id="mainNavbar">
+                            <ul class="navbar-nav gap-5 text-center">
+                                <li class="nav-item">
+                                    <a class="nav-link @(controller == "Home" ? "active" : "")"
+                                       asp-controller="Home" asp-action="Index">TRANG CHỦ</a>
+                                </li>
+                                <li class="nav-item"><a class="nav-link" href="#">LỊCH TRÌNH</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(controller == "Booking" ? "active" : "")"
+                                       asp-controller="Booking" asp-action="Index">TRA CỨU VÉ</a>
+                                </li>
+                                <li class="nav-item"><a class="nav-link" href="#">LIÊN HỆ</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#">VỀ CHÚNG TÔI</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+                @RenderSection("Navbar", required: false)
+            }
+            else
+            {
+                <nav class="navbar navbar-expand-lg px-4 py-3 bg-transparent text-white">
+                    <div class="container d-flex justify-content-between align-items-center w-100">
+                        <!-- Logo desktop -->
+                        <a class="navbar-brand fw-bold mx-auto d-none d-lg-block position-absolute start-50 translate-middle-x top-0"
+                           asp-controller="Home" asp-action="Index">
+                            <img src="@Url.Content("~/assets/logo_header.svg")" class="logo-header">
+                        </a>
+
+                        <!-- Login/Register (desktop only) -->
+                        <div class="account__container d-none d-lg-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                 fill="#f6f6f6" class="account__icon p-1 me-1">
+                                <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-240v-32q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v32q0 33-23.5 56.5T720-160H240q-33 0-56.5-23.5T160-240Z" />
+                            </svg>
+                            <a class="btn btn p-1" href="/Login.html">Đăng nhập</a>
+                            <a class="btn btn-transparent p-1" href="/Register.html">Đăng ký</a>
+                        </div>
+                    </div>
+                </nav>
+                <nav class="navbar navbar-expand-lg px-4 py-2 bg-transparent">
+                    <!-- Row 2: Tuyến + Ngày -->
+                    <div class="route-info text-uppercase w-100 text-center text-xxl-center text-start">
+                        <h3 class="title-nav">@ViewBag.Departure - @ViewBag.Destination</h3>
+                        <p class="title-nav-span">
+                            @((ViewBag.Date as DateTime?)?.ToString("dd/MM/yyyy"))
+                        </p>
+                    </div>
+                </nav>
+            }
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main role="main">
+        @RenderBody()
+        @await Html.PartialAsync("_Toast")
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-lg-start bg-light text-muted py-4">
+        <div class="container text-start mt-5">
+            <div class="row">
+                <!-- Các cột thông tin -->
+                <div class="col-md-3 mb-4">
+                    <h4 class="text-uppercase fw-bold mb-4">Boatify</h4>
+                    <p>Khám phá những chuyến hành trình tuyệt vời cùng Boatify - dịch vụ vé tàu đáng tin cậy của bạn.</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h4 class="text-uppercase fw-bold mb-4">Sản phẩm</h4>
+                    <p><a href="#">Tàu cao tốc</a></p>
+                    <p><a href="#">Vé khứ hồi</a></p>
+                    <p><a href="#">Ưu đãi</a></p>
+                    <p><a href="#">Lịch trình</a></p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h4 class="text-uppercase fw-bold mb-4">Liên kết</h4>
+                    <p><a href="#">Tài khoản</a></p>
+                    <p><a href="#">Trợ giúp</a></p>
+                    <p><a href="#">Hướng dẫn</a></p>
+                    <p><a href="#">Liên hệ</a></p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h4 class="text-uppercase fw-bold mb-4">Liên hệ</h4>
+                    <p>123 Nguyễn Văn Linh, Đà Nẵng</p>
+                    <p>support@boatify.vn</p>
+                    <p>0123 456 789</p>
+                    <p>0123 456 780</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-4 bg-light">
+            © 2025 Boatify. All rights reserved.
+        </div>
+    </footer>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+

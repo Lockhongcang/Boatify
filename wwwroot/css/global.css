@@ -1,0 +1,278 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root {
+    --primary-color: #ef5222;
+    --primary-color-1: #ff9f75;
+    --primary-color-2: #c93712;
+    --primary-color-3: #fff6f0;
+    --primary-disabled: #ffdbc7;
+    --primary-activce: #a32107;
+    --primary-hover: #fc7b4c;
+    --primary-outline: #570900;
+    --primary-text-green: #00613d;
+    --primary-color-dark: #333;
+    --primary-color-dark-1: #444;
+    --primary-color-dark-2: #555;
+    --primary-color-dark-3: #666;
+    --primary-color-secondairy: #e6e6e6;
+    --primary-color-secondairy-1: #f2f2f2;
+    --primary-color-secondairy-2: #d9d9d9;
+    --primary-color-light: #f6f6f6;
+    --primary-color-white: #fff;
+}
+
+* {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--primary-color-dark-1);
+    font-weight: 700 !important;
+    margin: 0 0 10px;
+}
+
+.title {
+    font-size: 1.75rem;
+    color: var(--primary-text-green);
+}
+
+.title-modal {
+    font-size: 1rem;
+    color: var(--primary-color-dark);
+}
+
+.title-nav {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary-color-light) !important;
+}
+
+.title-nav-span {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color-light) !important;
+}
+
+.sub-title {
+    font-size: 1.5rem;
+    color: var(--primary-color-dark-2);
+    margin: 0 !important;
+}
+
+.location_title {
+    font-weight: 600;
+}
+
+.text-green {
+    color: var(--primary-text-green) !important;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.text-type {
+    color: var(--primary-color-dark-3) !important;
+    font-weight: 500;
+}
+
+.price {
+    color: var(--primary-color) !important;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+a {
+    font-size: 14px;
+    color: var(--primary-color-dark-3) !important;
+    font-weight: 500;
+    text-decoration: none !important;
+    transition: color 0.2s ease;
+}
+
+label {
+    font-size: 0.9rem;
+    color: var(--primary-color-dark-3);
+    font-weight: 500;
+}
+
+.row {
+    margin: 0 !important;
+}
+
+hr {
+    border-top: solid var(--primary-color-secondairy-2);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color-1);
+    box-shadow: 0 0 5px var(--primary-color-1);
+    outline: none;
+}
+
+button, input, select, textarea {
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease;
+}
+
+button:hover, input:hover, select:hover {
+    border-color: var(--primary-hover);
+}
+
+.btn {
+    font-weight: 600 !important;
+}
+
+.btn.btn-search {
+    background-color: var(--primary-color);
+    color: var(--primary-color-light) !important;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+    .btn.btn-search-lg {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--primary-color) !important;
+        color: var(--primary-color-light) !important;
+        padding: 0.8rem 5rem;
+        border-radius: 2rem;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+    }
+
+.btn.btn-search-lg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+}
+
+    .btn.btn-search-lg:hover::before {
+        left: 100%;
+    }
+
+.btn-search:hover {
+    background-color: var(--primary-hover);
+}
+
+.recent-searches button {
+    font-size: 0.9rem;
+    line-height: 1.2;
+    padding: 0.5rem 1rem;
+}
+
+.btn-link {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+.cancel-button {
+    border-radius: 1rem;
+    background-color: var(--primary-color-light) !important;
+    padding: 0.8rem 1.5rem !important;
+    border: 1px solid var(--primary-color-secondairy-2) !important;
+}
+
+.booking-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color);
+    color: var(--primary-color-light) !important;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.booking-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+}
+
+.booking-button:hover::before {
+    left: 100%;
+}
+
+.card-custom, .trip-card, .ticket-box, .login-card, .register-card {
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    border-radius: 16px;
+    background-color: var(--primary-color-white);
+}
+
+.form-select,
+.form-control {
+    padding: 1rem !important;
+}
+
+select.form-select {
+    background-image: none !important;
+}
+
+.form-select {
+    border-radius: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+}
+
+.form-select:focus {
+    border-color: var(--primary-color-1) !important;
+    box-shadow: 0 0 5px var(--primary-color-1) !important;
+    outline: none;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color-2) !important;
+    border-color: var(--primary-color-2) !important;
+}
+
+.input-group.datetimepicker span.input-group-text {
+    background: none;
+}
+
+
+@media (max-width: 1199.98px) {
+    html {
+        font-size: 14px;
+    }
+}

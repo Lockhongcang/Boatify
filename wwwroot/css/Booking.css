@@ -1,0 +1,156 @@
+﻿@import url("global.css");
+
+@import url("global.css");
+
+/* ================================
+   1. NÚT “XÓA BỘ LỌC” (#clearFilterBtn)
+   ================================ */
+#clearFilterBtn {
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 8px;
+    color: var(--primary-color);
+    background-color: transparent;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+    #clearFilterBtn .material-symbols-rounded {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        transition: color 0.2s ease;
+    }
+
+    #clearFilterBtn:hover {
+        background-color: var(--primary-color);
+        color: var(--primary-color-white);
+    }
+
+        #clearFilterBtn:hover .material-symbols-rounded {
+            color: var(--primary-color-white);
+        }
+
+/* ================================
+   2. BUTTON trong “BỘ LỌC” (.filter-section button)
+   ================================ */
+.filter-section button {
+    margin: 0.25rem;
+    padding: 0.4rem 0.8rem;
+    background-color: var(--primary-color-light);
+    border: none;
+    color: var(--primary-color-dark);
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+    .filter-section button:hover {
+        background-color: var(--primary-color);
+        color: var(--primary-color-white);
+        border-color: var(--primary-color);
+    }
+
+    .filter-section button.active {
+        background-color: var(--primary-color);
+        color: var(--primary-color-white);
+        border-color: var(--primary-color);
+    }
+
+/* ================================
+   3. Lựa chọn “Giờ đi” (checkbox + label)
+   ================================ */
+.form-check-input:checked + .form-check-label {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.form-check-input:hover + .form-check-label,
+.form-check-label:hover {
+    color: var(--primary-color);
+}
+
+/* ================================
+   4. BUTTON “SẮP XẾP” (.sort-item)
+   ================================ */
+.sort-section .sort-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0.4rem 0.8rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: var(--primary-color-light);
+    color: var(--primary-color-dark-3);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+}
+    .sort-item .material-symbols-rounded {
+        font-size: 1.2rem;
+        color: var(--primary-color-dark-3);
+        transition: color 0.2s ease;
+    }
+
+    .sort-item:hover {
+        background-color: var(--primary-color-3);
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+        .sort-item:hover .material-symbols-rounded {
+            color: var(--primary-color);
+        }
+
+    .sort-item.active {
+        background-color: var(--primary-color);
+        color: var(--primary-color-white);
+        border-color: var(--primary-color);
+    }
+
+        .sort-item.active .material-symbols-rounded {
+            color: var(--primary-color-white);
+        }
+
+/* ================================
+   5. LINK (<a>) chung
+   ================================ */
+a:hover,
+a:focus {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+@media (max-width: 1099.98px) {
+    section.position-relative {
+        display: none !important;
+    }
+
+    section {
+        padding: 0 !important;
+    }
+
+    .booking_section .col-4 {
+        display: none !important;
+    }
+
+   .booking_section .col-8 {
+      width: 100% !important;
+      flex: 0 0 100% !important;
+      max-width: 100% !important;
+   }
+
+   .booking_section .mobile-nav {
+      display: flex !important;
+      padding: 1rem;
+      background-color: var(--primary-color-white);
+      border-radius: 1rem;
+      margin-bottom: 1rem;
+   }
+
+   .booking_section .desktop-header {
+      display: none !important;
+   }
+}

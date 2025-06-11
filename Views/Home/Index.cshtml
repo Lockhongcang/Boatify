@@ -1,0 +1,199 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model Boatify.Models.ViewModels.BookingViewModel
+
+@section Navbar {
+    @* (Navbar được đưa vào trong layout. Nếu bạn muốn custom từng trang, ta dùng section này) *@
+}
+
+@await Component.InvokeAsync("TicketBox", new { model = Model.TicketBox })
+
+<section class="main__component my-4">
+    <div class="recent-searches recent-searches-mobile mt-4 p-2">
+        <div class="text-center">
+            <h4 class="title">Tìm kiếm gần đây</h4>
+        </div>
+        <div id="recentSearchList"></div>
+    </div>
+    <div class="popular-route__container py-3 my-4 w-100">
+        <div class="container py-3">
+            <div class="text-center">
+                <h4 class="title">TUYẾN PHỔ BIẾN</h4>
+                <p>Được khách hàng tin tưởng và lựa chọn</p>
+            </div>
+            <div class="card-scroll-container">
+
+                <!-- Card 1 -->
+                <div class="card-custom">
+                    <div class="card-header gap-3"
+                         style="background-image: url('https://images.unsplash.com/photo-1571850092964-9c124bb78e48?q=80&w=2068&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                        <div class="card-title">Tuyến xe từ</div>
+                        <div class="city-name">Tp Hồ Chí Minh</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="route-item">
+                            <div>
+                                <div class="route-info">Đà Lạt</div>
+                                <div class="route-distance">305km - 8 giờ - 21/05/2025</div>
+                            </div>
+                            <div class="route-price">290.000đ</div>
+                        </div>
+                        <div class="route-item">
+                            <div>
+                                <div class="route-info">Cần Thơ</div>
+                                <div class="route-distance">166km - 5 giờ - 21/05/2025</div>
+                            </div>
+                            <div class="route-price">165.000đ</div>
+                        </div>
+                        <div class="route-item">
+                            <div>
+                                <div class="route-info">Long Xuyên</div>
+                                <div class="route-distance">203km - 5 giờ - 21/05/2025</div>
+                            </div>
+                            <div class="route-price">190.000đ</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-custom">
+                    <div class="card-header gap-3"
+                         style="background-image: url('https://images.unsplash.com/photo-1555476246-0f72183ae174?q=80&w=2125&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                        <div class="card-title">Tuyến xe từ</div>
+                        <div class="city-name">Tp Hồ Chí Minh</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="route-item">
+                            <div>
+                                <div class="route-info">Đà Lạt</div>
+                                <div class="route-distance">305km - 8 giờ - 21/05/2025</div>
+                            </div>
+                            <div class="route-price">290.000đ</div>
+                        </div>
+                        <div class="route-item">
+                            <div>
+                                <div class="route-info">Cần Thơ</div>
+                                <div class="route-distance">166km - 5 giờ - 21/05/2025</div>
+                            </div>
+                            <div class="route-price">165.000đ</div>
+                        </div>
+                        <div class="route-item">
+                            <div>
+                                <div class="route-info">Long Xuyên</div>
+                                <div class="route-distance">203km - 5 giờ - 21/05/2025</div>
+                            </div>
+                            <div class="route-price">190.000đ</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-custom">
+                    <div class="card-header gap-3"
+                         style="background-image: url('https://images.unsplash.com/photo-1693294603830-f44c9511d643?q=80&w=1933&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                        <div class="card-title">Tuyến xe từ</div>
+                        <div class="city-name">Tp Hồ Chí Minh</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="route-item">
+                            <div>
+                                <div class="route-info">Đà Lạt</div>
+                                <div class="route-distance">305km - 8 giờ - 21/05/2025</div>
+                            </div>
+                            <div class="route-price">290.000đ</div>
+                        </div>
+                        <div class="route-item">
+                            <div>
+                                <div class="route-info">Cần Thơ</div>
+                                <div class="route-distance">166km - 5 giờ - 21/05/2025</div>
+                            </div>
+                            <div class="route-price">165.000đ</div>
+                        </div>
+                        <div class="route-item">
+                            <div>
+                                <div class="route-info">Long Xuyên</div>
+                                <div class="route-distance">203km - 5 giờ - 21/05/2025</div>
+                            </div>
+                            <div class="route-price">190.000đ</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    <div class="container">
+    <div class="text-center">
+        <h4 class="title">BOATIFY – PLAN, BOOK AND FLY</h4>
+        <p>Được khách hàng tin tưởng và lựa chọn</p>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <div class="info-block">
+                <div class="info-icon">
+                    <img src="https://cdn.futabus.vn/futa-busline-cms-dev/Group_2_75b5ed1dfd/Group_2_75b5ed1dfd.svg" alt="icon" />
+                </div>
+                <div>
+                    <p class="info-title">Hơn 40 Triệu <span>Lượt khách</span></p>
+                    <p class="info-desc">Phương Trang phục vụ hơn 40 triệu lượt khách bình quân 1 năm trên toàn quốc</p>
+                </div>
+            </div>
+
+            <div class="info-block">
+                <div class="info-icon">
+                    <img src="https://cdn.futabus.vn/futa-busline-cms-dev/Store_55c0da8bd7/Store_55c0da8bd7.svg" alt="icon" />
+                </div>
+                <div>
+                    <p class="info-title">Hơn 350 <span>Phòng vé – Bưu cục</span></p>
+                    <p class="info-desc">Phương Trang có hơn 350 phòng vé, trạm trung chuyển, bến xe,... trên toàn hệ thống</p>
+                </div>
+            </div>
+
+            <div class="info-block">
+                <div class="info-icon">
+                    <img src="https://cdn.futabus.vn/futa-busline-cms-dev/Group_662c4422ba/Group_662c4422ba.svg" alt="icon" />
+                </div>
+                <div>
+                    <p class="info-title">Hơn 6,500 <span>Chuyến xe</span></p>
+                    <p class="info-desc">Phương Trang phục vụ hơn 6,500 chuyến xe đường dài và liên tỉnh mỗi ngày</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 image-content d-none d-md-block text-center">
+            <img src="@Url.Content("~/assets/Mobile Marketing-rafiki.png")"/>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/ticketbox.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const oneWay = document.getElementById("oneWay");
+            const roundTrip = document.getElementById("roundTrip");
+            const returnDateInput = document.querySelector("input.returnDate");
+
+            function updateReturnDateState() {
+                if (roundTrip.checked) {
+                    returnDateInput.disabled = false;
+                    returnDateInput.setAttribute("name", "returnDate");
+                    returnDateInput.parentElement.classList.remove("opacity-50");
+                } else {
+                    returnDateInput.disabled = true;
+                    returnDateInput.removeAttribute("name");
+                    returnDateInput.parentElement.classList.add("opacity-50");
+                }
+            }
+
+            if (oneWay && roundTrip && returnDateInput) {
+                oneWay.addEventListener("change", updateReturnDateState);
+                roundTrip.addEventListener("change", updateReturnDateState);
+                updateReturnDateState(); // chạy khi load
+            }
+        });
+    </script>
+}

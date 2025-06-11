@@ -1,0 +1,14 @@
+{
+  "version": "3.0",
+  "defaultProvider": "jsdelivr",
+  "libraries": [
+    {
+      "library": "@popperjs/core@2.11.8",
+      "destination": "wwwroot/lib/popperjs/core/"
+    },
+    {
+      "library": "@eonasdan/tempus-dominus@6.9.4",
+      "destination": "wwwroot/lib/eonasdan/tempus-dominus/"
+    }
+  ]
+}

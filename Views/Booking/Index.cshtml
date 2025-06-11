@@ -1,0 +1,339 @@
+﻿@model Boatify.Models.ViewModels.BookingViewModel
+@{
+    ViewData["Title"] = "Tìm chuyến xe";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link href="~/css/Booking.css" rel="stylesheet" />
+}
+
+@await Component.InvokeAsync("TicketBox", new { model = Model.TicketBox })
+
+<section class="booking_section">
+    <div class="container p-0 my-4">
+        <div class="row">
+            <!-- Sidebar (Bộ lọc) -->
+            <div class="col-4">
+                <div class="sticky-header">
+                    <div class="filter-sidebar d-none d-lg-block">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="title-modal mb-0">BỘ LỌC TÌM KIẾM</h4>
+                            <button class="btn btn-transparent btn-sm d-flex align-items-center gap-1" id="clearFilterBtn">
+                                Xóa bộ lọc
+                                <span class="material-symbols-rounded">filter_alt_off</span>
+                            </button>
+                        </div>
+
+                        <!-- 1. Filter: Giờ đi -->
+                        <div class="filter-section">
+                            <h5>Giờ đi</h5>
+                            <div class="form-check">
+                                <input class="form-check-input filter-time" type="checkbox" id="time-00-06" value="00-06" />
+                                <label class="form-check-label" for="time-00-06">
+                                    00:00 - 06:00
+                                    <span>(
+                                        @Model.Voyages.Count(v => {
+                                            var p = v.DepartTime.Split(':');
+                                            int h = int.Parse(p[0]);
+                                            return h >= 0 && h < 6;
+                                        })
+                                    )</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-time" type="checkbox" id="time-06-12" value="06-12" />
+                                <label class="form-check-label" for="time-06-12">
+                                    06:00 - 12:00
+                                    <span>(
+                                        @Model.Voyages.Count(v => {
+                                            var p = v.DepartTime.Split(':');
+                                            int h = int.Parse(p[0]);
+                                            return h >= 6 && h < 12;
+                                        })
+                                    )</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-time" type="checkbox" id="time-12-18" value="12-18" />
+                                <label class="form-check-label" for="time-12-18">
+                                    12:00 - 18:00
+                                    <span>(
+                                        @Model.Voyages.Count(v => {
+                                            var p = v.DepartTime.Split(':');
+                                            int h = int.Parse(p[0]);
+                                            return h >= 12 && h < 18;
+                                        })
+                                    )</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-time" type="checkbox" id="time-18-24" value="18-24" />
+                                <label class="form-check-label" for="time-18-24">
+                                    18:00 - 24:00
+                                    <span>(
+                                        @Model.Voyages.Count(v => {
+                                            var p = v.DepartTime.Split(':');
+                                            int h = int.Parse(p[0]);
+                                            return h >= 18 && h < 24;
+                                        })
+                                    )</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <hr class="my-1" />
+
+                        <!-- 2. Filter: Loại tàu -->
+                        <div class="filter-section">
+                            <h5>Loại tàu</h5>
+                            @{
+                                // Lấy danh sách loại tàu duy nhất
+                                var distinctTypes = Model.Voyages
+                                                       .Select(v => v.BoatTypeNm)
+                                                       .Distinct()
+                                                       .ToList();
+                            }
+                            @foreach (var type in distinctTypes)
+                            {
+                                <button type="button"
+                                        class="btn btn-light filter-boat-type"
+                                        data-boat-type="@type">
+                                    @type
+                                </button>
+                            }
+                        </div>
+
+                        <hr class="my-1" />
+
+                        <!-- 3. Filter: Tầng -->
+                        <div class="filter-section">
+                            <h5>Tầng</h5>
+                            <button type="button" class="btn btn-light filter-deck" data-deck="upper">Tầng trên</button>
+                            <button type="button" class="btn btn-light filter-deck" data-deck="lower">Tầng dưới</button>
+                            @* Nếu tàu không có nhiều tầng, sẽ không hiển thị (logic nằm trong JS). *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kết quả chuyến đi -->
+            <div class="col-8">
+                <div class="sticky-header">
+                    <!-- Desktop header -->
+                    <div class="desktop-header d-none d-lg-flex justify-content-between align-items-center">
+                        <div class="d-flex flex-column align-items-start">
+                            <h4 class="sub-title pt-2">
+                                @Model.TicketBox.SelectedDeparture - @Model.TicketBox.SelectedDestination
+                                <span class="sub-title">(@Model.Voyages.Count())</span>
+                            </h4>
+                            <div class="sort-section my-3 d-flex">
+                                <button class="sort-item">
+                                    <span class="material-symbols-rounded">request_page</span>
+                                    Giá rẻ bất ngờ
+                                </button>
+                                <button class="sort-item active">
+                                    <span class="material-symbols-rounded">schedule</span>
+                                    Giờ khởi hành
+                                </button>
+                                <button class="sort-item">
+                                    <span class="material-symbols-rounded">airline_seat_recline_extra</span>
+                                    Ghế trống
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile header + Filter toggle -->
+                    <div class="mobile-nav d-flex flex-column d-lg-none px-3 py-2 bg-white rounded">
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <div class="text-center w-100">
+                                <h4 class="sub-title mb-0">
+                                    @Model.TicketBox.SelectedDeparture - @Model.TicketBox.SelectedDestination
+                                    <span class="sub-title">(@Model.Voyages.Count())</span>
+                                </h4>
+                                <p class="text-muted mb-0">
+                                    @(Model.TicketBox.SelectedDate?.ToString("dd/MM/yyyy") ?? "")
+                                </p>
+                            </div>
+                            <button class="btn btn-transparent ms-2 d-flex align-items-center gap-1"
+                                    data-bs-toggle="offcanvas" data-bs-target="#filterCanvas">
+                                <span class="material-symbols-rounded">filter_alt</span>
+                            </button>
+                        </div>
+
+                        <div class="sort-section mt-3 w-100">
+                            <button class="sort-item">
+                                <span class="material-symbols-rounded">request_page</span>
+                                Giá rẻ bất ngờ
+                            </button>
+                            <button class="sort-item active">
+                                <span class="material-symbols-rounded">schedule</span>
+                                Giờ khởi hành
+                            </button>
+                            <button class="sort-item">
+                                <span class="material-symbols-rounded">airline_seat_recline_extra</span>
+                                Ghế trống
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Offcanvas filter cho Mobile -->
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="filterCanvas">
+                    <div class="offcanvas-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="title-modal mb-0">BỘ LỌC TÌM KIẾM</h4>
+                            <button class="btn btn-transparent btn-sm d-flex align-items-center gap-1" id="clearFilterBtnMobile">
+                                Xóa bộ lọc
+                                <span class="material-symbols-rounded">filter_alt_off</span>
+                            </button>
+                        </div>
+
+                        <!-- Copy phần “Giờ đi” -->
+                        <div class="filter-section">
+                            <h5>Giờ đi</h5>
+                            <div class="form-check">
+                                <input class="form-check-input filter-time" type="checkbox" id="m-time-00-06" value="00-06" />
+                                <label class="form-check-label" for="m-time-00-06">00:00 - 06:00</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-time" type="checkbox" id="m-time-06-12" value="06-12" />
+                                <label class="form-check-label" for="m-time-06-12">06:00 - 12:00</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-time" type="checkbox" id="m-time-12-18" value="12-18" />
+                                <label class="form-check-label" for="m-time-12-18">12:00 - 18:00</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-time" type="checkbox" id="m-time-18-24" value="18-24" />
+                                <label class="form-check-label" for="m-time-18-24">18:00 - 24:00</label>
+                            </div>
+                        </div>
+                        <hr class="my-1" />
+
+                        <!-- Copy phần “Loại tàu” -->
+                        <div class="filter-section">
+                            <h5>Loại tàu</h5>
+                            @foreach (var type in distinctTypes)
+                            {
+                                <button type="button"
+                                        class="btn btn-light filter-boat-type"
+                                        data-boat-type="@type">
+                                    @type
+                                </button>
+                            }
+                        </div>
+                        <hr class="my-1" />
+
+                        <!-- Copy phần “Tầng” -->
+                        <div class="filter-section">
+                            <h5>Tầng</h5>
+                            <button type="button" class="btn btn-light filter-deck" data-deck="upper">Tầng trên</button>
+                            <button type="button" class="btn btn-light filter-deck" data-deck="lower">Tầng dưới</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danh sách chuyến đi -->
+                <div class="trip-list mt-3">
+                    @if (!Model.Voyages.Any())
+                    {
+                        <div class="alert alert-warning">Không tìm thấy chuyến phù hợp.</div>
+                    }
+                    else
+                    {
+                        @foreach (var voyage in Model.Voyages)
+                        {
+                                // Chuyển DepartTime ("HH:mm") → số phút kể từ 00:00
+                                var parts = voyage.DepartTime.Split(':');
+                                int hh = int.Parse(parts[0]);
+                                int mm = int.Parse(parts[1]);
+                                int totalMinutes = hh * 60 + mm;
+
+                                // Giả định “tầng” dựa vào BoatTypeNm:
+                                // Nếu là loại “Giường” thì có cả hai tầng. Ở đây ví dụ gán tạm “upper”.
+                                // Nếu bạn có dữ liệu thực tế (ví dụ voyage.Deck = "upper"/"lower"/"single"),
+                                // thì chỉ việc thay thế giá trị bên dưới bằng voyage.Deck.
+                                string deckValue = voyage.BoatTypeNm.ToLower().Contains("giường")
+                                                   ? "upper"
+                                                   : "single";
+                            <div class="trip-card bg-white mb-3"
+                                 data-depart-minutes="@totalMinutes"
+                                 data-boat-type="@voyage.BoatTypeNm"
+                                 data-deck="@deckValue">
+                                <div class="row text-center mb-2 g-3">
+                                    <div class="col-12 d-flex justify-content-between align-items-center">
+                                        <div class="destinate_section d-flex flex-row justify-content-between">
+                                            <h4 class="sub-title">@voyage.DepartTime</h4>
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                                                 width="24px" fill="#00613d">
+                                                <path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 280q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" />
+                                            </svg>
+                                        </div>
+                                        <div class="dot-line"></div>
+                                        <div class="time-expected text-muted fw-semibold">
+                                            <span>0 Tiếng</span>
+                                            <div class="text-small">(Asia/Ho Chi Minh)</div>
+                                        </div>
+                                        <div class="dot-line"></div>
+                                        <div class="departure_section d-flex flex-row justify-content-between">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                                                 width="24px" fill="#ef5222">
+                                                <path d="M480-107q-14 0-28-5t-25-15q-65-60-115-117t-83.5-110.5q-33.5-53.5-51-103T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 45-17.5 94.5t-51 103Q698-301 648-244T533-127q-11 10-25 15t-28 5Zm0-373q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Z" />
+                                            </svg>
+                                            <h4 class="sub-title">00:00</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 d-flex justify-content-between mt-2">
+                                        <div class="location_title">@Model.TicketBox.SelectedDeparture</div>
+                                        <div class="location_title">@Model.TicketBox.SelectedDestination</div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-3" />
+
+                                <div class="row gx-0 align-items-center flex-nowrap">
+                                    <div class="col-auto">
+                                        <ul class="dot-list-horizontal">
+                                            <li class="text-type">@voyage.BoatNm</li>
+                                            <li class="text-green">@voyage.NoOfRemain chỗ</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col text-end">
+                                        @{
+                                            var price = ((Dictionary<int, double>)ViewBag.PriceDict)[voyage.VoyageId];
+                                        }
+                                        <span class="price">@string.Format("{0:N0}đ", price)</span>
+                                    </div>
+                                </div>
+
+                                <div class="trip-dropdown mt-2">
+                                    <a class="booking-button"
+                                       asp-controller="Seat"
+                                       asp-action="Map"
+                                       asp-route-id="@voyage.VoyageId"
+                                       asp-route-scheduleId="@voyage.ScheduleId"
+                                       asp-route-routeId="@voyage.RouteId"
+                                       asp-route-departure="@Model.TicketBox.SelectedDeparture"
+                                       asp-route-destination="@Model.TicketBox.SelectedDestination"
+                                       asp-route-date="@Model.TicketBox.SelectedDate?.ToString("yyyy-MM-dd")">
+                                        Chọn chuyến
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/ticketbox.js"></script>
+    <script src="~/js/filter.js"></script>
+}
