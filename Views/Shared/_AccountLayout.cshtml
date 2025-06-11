@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Boatify</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="~/css/login.css" rel="stylesheet" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    @RenderSection("Scripts", required: false)
+    @RenderSection("Styles", required: false)
+</head>
+
+@{
+    var bodyClass = ViewData["BodyClass"]?.ToString() ?? "";
+}
+
+<body class="@bodyClass">
+
+    @{
+        var formState = TempData["FormState"]?.ToString();
+        var containerClass = formState == "register" ? "animate-register" : "animate-login";
+    }
+    <div class="container @containerClass">
+        @RenderBody()
+        <div class="toggle-box">
+            @if (TempData["FormState"]?.ToString() == "register")
+            {
+                <div class="toggle-panel toggle-right">
+                    <img src="~/assets/Yacht-rafiki.svg" />
+                    <h1>Welcome Back!</h1>
+                    <p>Already have an account?</p>
+                    <a class="btn login-btn" href="/Account/Login">Login</a>
+                </div>
+            }
+            else
+            {
+                <div class="toggle-panel toggle-left">
+                    <img src="~/assets/Yacht-pana.svg"/>
+                    <h1>Hello, Welcome!</h1>
+                    <p>Don't have an account?</p>
+                    <a class="btn register-btn" href="/Account/Register">Register</a>
+                </div>
+            }
+
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_Toast")
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/login.js"></script>
+</body>
+</html>
