@@ -32,7 +32,7 @@ namespace Boatify.Controllers
 
             string passwordHash = ComputeSha256Hash(model.Password);
 
-            var user = _context.Accounts.FirstOrDefault(a => a.Email == model.Email && a.PasswordHash == passwordHash);
+            var user = _context.Users.FirstOrDefault(u => u.Email == model.Email && u.Password == passwordHash && u.IsActive);
 
             if (user == null)
             {
@@ -40,30 +40,21 @@ namespace Boatify.Controllers
                 return View(model);
             }
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ClaimTypes.Role, user.Role),
-                new Claim("UserId", user.AccountId.ToString())
-            };
+            // Use session instead of claims for simplicity
+            HttpContext.Session.SetString("UserEmail", user.Email);
+            HttpContext.Session.SetString("UserName", user.FullName);
+            HttpContext.Session.SetInt32("UserId", user.UserId);
 
-            var identity = new ClaimsIdentity(claims, "AuthCookie");
-            var principal = new ClaimsPrincipal(identity);
-
-            await HttpContext.SignInAsync("AuthCookie", principal, new AuthenticationProperties
-            {
-                IsPersistent = model.RememberMe // tự động nhớ
-            });
-
-            SetSuccess($"Xin chào, {user.Email}");
+            SetSuccess($"Xin chào, {user.FullName}");
             return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
-            await HttpContext.SignOutAsync("AuthCookie");
-            return RedirectToAction("Login");
+            HttpContext.Session.Clear();
+            SetSuccess("Đăng xuất thành công!");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -79,31 +70,22 @@ namespace Boatify.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            if (_context.Accounts.Any(a => a.Email == model.Email))
+            if (_context.Users.Any(u => u.Email == model.Email))
             {
                 SetError("Email đã tồn tại.");
                 return View(model);
             }
 
-            var account = new Account
+            var user = new User
             {
                 Email = model.Email,
-                PasswordHash = ComputeSha256Hash(model.Password),
-                Role = "Customer",
-                CreatedAt = DateTime.UtcNow
+                Password = ComputeSha256Hash(model.Password),
+                FullName = model.FullName,
+                Phone = model.Phone,
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true
             };
-            _context.Accounts.Add(account);
-            _context.SaveChanges();
-
-            string[] names = model.FullName.Trim().Split(' ', 2);
-            var customer = new Customer
-            {
-                AccountId = account.AccountId,
-                FirstName = names.Length > 1 ? names[0] : "",
-                LastName = names.Length > 1 ? names[1] : names[0],
-                PhoneNumber = model.Phone
-            };
-            _context.Customers.Add(customer);
+            _context.Users.Add(user);
             _context.SaveChanges();
 
             SetSuccess("Tạo tài khoản thành công. Vui lòng đăng nhập.");

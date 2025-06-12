@@ -1,0 +1,205 @@
+@model List<Boatify.Models.Dto.OrderSummary>
+@{
+    ViewData["Title"] = "Lịch sử đặt vé";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link href="~/css/OrderHistory.css" rel="stylesheet" />
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <h2 class="page-title">Lịch sử đặt vé</h2>
+                <p class="page-subtitle">Quản lý và theo dõi các chuyến đi của bạn</p>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h4>Chưa có đơn hàng nào</h4>
+                    <p>Bạn chưa đặt vé nào. Hãy bắt đầu khám phá các chuyến đi của chúng tôi!</p>
+                    <a href="/" class="btn btn-primary">Đặt vé ngay</a>
+                </div>
+            }
+            else
+            {
+                <div class="orders-container">
+                    @foreach (var order in Model)
+                    {
+                        <div class="order-card" data-order-id="@order.OrderId">
+                            <div class="order-header">
+                                <div class="order-info">
+                                    <h5 class="order-code">@order.OrderCode</h5>
+                                    <span class="order-date">@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                                <div class="order-status">
+                                    <span class="status-badge status-@order.Status.ToLower()">@GetStatusText(order.Status)</span>
+                                </div>
+                            </div>
+
+                            <div class="order-content">
+                                <div class="trip-info">
+                                    <div class="route">
+                                        <div class="departure">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>@Html.Raw(System.Net.WebUtility.HtmlDecode(order.Departure))</span>
+                                        </div>
+                                        <div class="route-arrow">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </div>
+                                        <div class="destination">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>@Html.Raw(System.Net.WebUtility.HtmlDecode(order.Destination))</span>
+                                        </div>
+                                    </div>
+                                    <div class="departure-time">
+                                        <i class="fas fa-clock"></i>
+                                        <span>@order.DepartureTime.ToString("dd/MM/yyyy HH:mm")</span>
+                                    </div>
+                                </div>
+
+                                <div class="ticket-summary">
+                                    <div class="ticket-count">
+                                        <i class="fas fa-users"></i>
+                                        <span>@order.Tickets.Count hành khách</span>
+                                    </div>
+                                    <div class="seats">
+                                        <i class="fas fa-chair"></i>
+                                        <span>Ghế: @string.Join(", ", order.Tickets.Select(t => t.SeatCode))</span>
+                                    </div>
+                                </div>
+
+                                <div class="order-footer">
+                                    <div class="total-amount">
+                                        <span class="label">Tổng tiền:</span>
+                                        <span class="amount">@order.TotalAmount.ToString("N0") VNĐ</span>
+                                    </div>
+                                    <div class="order-actions">
+                                        <a href="@Url.Action("Details", new { id = order.OrderId })" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                            Chi tiết
+                                        </a>
+                                        @if (order.Status == "Paid" && order.DepartureTime > DateTime.Now.AddHours(24))
+                                        {
+                                            <button class="btn btn-outline-danger btn-sm" onclick="cancelOrder(@order.OrderId)">
+                                                <i class="fas fa-times"></i>
+                                                Hủy vé
+                                            </button>
+                                        }
+                                        @if (order.Status == "Paid")
+                                        {
+                                            <button class="btn btn-outline-success btn-sm" onclick="downloadTicket(@order.OrderId)">
+                                                <i class="fas fa-download"></i>
+                                                Tải vé
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Pagination (if needed) -->
+                <nav aria-label="Order pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <!-- Add pagination if you implement it -->
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function cancelOrder(orderId) {
+            Swal.fire({
+                title: 'Xác nhận hủy vé',
+                text: 'Bạn có chắc chắn muốn hủy vé này? Hành động này không thể hoàn tác.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Hủy vé',
+                cancelButtonText: 'Không'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/Order/Cancel/${orderId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: data.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: data.message
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra khi hủy vé.'
+                        });
+                    });
+                }
+            });
+        }
+
+        function downloadTicket(orderId) {
+            // Implement ticket download functionality
+            Swal.fire({
+                icon: 'info',
+                title: 'Đang chuẩn bị',
+                text: 'Chức năng tải vé đang được phát triển.',
+                confirmButtonText: 'Đã hiểu'
+            });
+        }
+
+        // Auto-refresh status for pending orders
+        setInterval(function() {
+            const pendingOrders = document.querySelectorAll('.status-pending').closest('.order-card');
+            if (pendingOrders.length > 0) {
+                // Implement status refresh logic if needed
+            }
+        }, 30000);
+    </script>
+}
+
+@functions {
+    string GetStatusText(string status)
+    {
+        return status switch
+        {
+            "Pending" => "Chờ thanh toán",
+            "Paid" => "Đã thanh toán",
+            "Cancelled" => "Đã hủy",
+            "Failed" => "Thất bại",
+            "Expired" => "Hết hạn",
+            _ => status
+        };
+    }
+}

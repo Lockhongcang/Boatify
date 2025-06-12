@@ -96,6 +96,8 @@
                                 @if (Context.Session.GetString("UserEmail") != null)
                                 {
                                     <li class="dropdown-item">@Context.Session.GetString("UserEmail")</li>
+                                    <li><a class="dropdown-item" asp-controller="Order" asp-action="Index">Lịch sử đặt vé</a></li>
+                                    <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
                                 }
                                 else
@@ -115,8 +117,16 @@
 
                             @if (Context.Session.GetString("UserEmail") != null)
                             {
-                                <span class="text-white pe-2 small">@Context.Session.GetString("UserEmail")</span>
-                                <a class="btn btn-transparent p-1" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
+                                <div class="dropdown">
+                                    <button class="btn btn-transparent dropdown-toggle p-1" type="button" data-bs-toggle="dropdown">
+                                        <span class="text-white pe-1 small">@Context.Session.GetString("UserEmail")</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" asp-controller="Order" asp-action="Index">Lịch sử đặt vé</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
+                                    </ul>
+                                </div>
                             }
                             else
                             {

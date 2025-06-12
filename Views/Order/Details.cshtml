@@ -1,0 +1,310 @@
+@model Boatify.Models.Dto.OrderSummary
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-primary">
+                    <i class="fas fa-receipt me-2"></i>Chi tiết đơn hàng
+                </h2>
+                <a href="@Url.Action("Index", "Order")" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Quay lại
+                </a>
+            </div>
+
+            <!-- Order Information Card -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Thông tin đơn hàng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold text-muted">Mã đơn hàng:</td>
+                                    <td class="text-primary fw-bold">@Model.OrderCode</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-muted">Ngày đặt:</td>
+                                    <td>@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-muted">Trạng thái:</td>
+                                    <td>
+                                        @if (Model.Status == "Paid")
+                                        {
+                                            <span class="badge bg-success">Đã thanh toán</span>
+                                        }
+                                        else if (Model.Status == "Pending")
+                                        {
+                                            <span class="badge bg-warning">Chờ thanh toán</span>
+                                        }
+                                        else if (Model.Status == "Cancelled")
+                                        {
+                                            <span class="badge bg-danger">Đã hủy</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@Model.Status</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold text-muted">Tuyến đường:</td>
+                                    <td>@Html.Raw(System.Net.WebUtility.HtmlDecode(Model.Departure)) → @Html.Raw(System.Net.WebUtility.HtmlDecode(Model.Destination))</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-muted">Ngày khởi hành:</td>
+                                    <td>@Model.DepartureTime.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-muted">Tổng tiền:</td>
+                                    <td class="text-danger fw-bold fs-5">@Model.TotalAmount.ToString("N0") VNĐ</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tickets Information -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-ticket-alt me-2"></i>Thông tin vé (@Model.Tickets.Count vé)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th><i class="fas fa-chair me-1"></i>Ghế</th>
+                                    <th><i class="fas fa-user me-1"></i>Hành khách</th>
+                                    <th><i class="fas fa-phone me-1"></i>Số điện thoại</th>
+                                    <th><i class="fas fa-money-bill me-1"></i>Giá vé</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ticket in Model.Tickets)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="badge bg-primary fs-6">@ticket.SeatCode</span>
+                                        </td>
+                                        <td class="fw-bold">@ticket.PassengerName</td>
+                                        <td>@ticket.PassengerPhone</td>
+                                        <td class="text-success fw-bold">@ticket.Price.ToString("N0") VNĐ</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Information -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-credit-card me-2"></i>Thông tin thanh toán
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold text-muted">Phương thức:</td>
+                                    <td>
+                                        @if (Model.Payment.Method == "vnpay")
+                                        {
+                                            <span class="badge bg-primary">VNPay</span>
+                                        }
+                                        else if (Model.Payment.Method == "momo")
+                                        {
+                                            <span class="badge bg-danger">MoMo</span>
+                                        }
+                                        else if (Model.Payment.Method == "banking")
+                                        {
+                                            <span class="badge bg-info">Internet Banking</span>
+                                        }
+                                        else if (Model.Payment.Method == "cash")
+                                        {
+                                            <span class="badge bg-warning">Tiền mặt</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@Model.Payment.Method</span>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-muted">Trạng thái thanh toán:</td>
+                                    <td>
+                                        @if (Model.Payment.Status == "Success")
+                                        {
+                                            <span class="badge bg-success">Thành công</span>
+                                        }
+                                        else if (Model.Payment.Status == "Pending")
+                                        {
+                                            <span class="badge bg-warning">Chờ xử lý</span>
+                                        }
+                                        else if (Model.Payment.Status == "Failed")
+                                        {
+                                            <span class="badge bg-danger">Thất bại</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@Model.Payment.Status</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold text-muted">Số tiền:</td>
+                                    <td class="text-success fw-bold">@Model.Payment.Amount.ToString("N0") VNĐ</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-muted">Ngày thanh toán:</td>
+                                    <td>
+                                        @if (Model.Payment.PaidDate.HasValue)
+                                        {
+                                            @Model.Payment.PaidDate.Value.ToString("dd/MM/yyyy HH:mm")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Chưa thanh toán</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            @{
+                var hoursUntilDeparture = (Model.DepartureTime - DateTime.Now).TotalHours;
+            }
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    @if (Model.Status == "Paid")
+                    {
+                        <button class="btn btn-outline-primary me-2" onclick="printOrder()">
+                            <i class="fas fa-print me-1"></i>In vé
+                        </button>
+
+                        @if (hoursUntilDeparture > 24)
+                        {
+                            <button class="btn btn-outline-danger" onclick="cancelOrder(@Model.OrderId)">
+                                <i class="fas fa-times me-1"></i>Hủy vé
+                            </button>
+                        }
+                        else
+                        {
+                            <small class="text-muted d-block mt-2">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Không thể hủy vé trong vòng 24 giờ trước giờ khởi hành
+                            </small>
+                        }
+                    }
+                    else if (Model.Status == "Pending")
+                    {
+                        <a href="@Url.Action("Index", "Checkout")" class="btn btn-success">
+                            <i class="fas fa-credit-card me-1"></i>Tiếp tục thanh toán
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function printOrder() {
+            window.print();
+        }
+
+        function cancelOrder(orderId) {
+            Swal.fire({
+                title: 'Xác nhận hủy vé',
+                text: 'Bạn có chắc chắn muốn hủy đơn hàng này?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Hủy vé',
+                cancelButtonText: 'Không'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '@Url.Action("Cancel", "Order")',
+                        type: 'POST',
+                        data: { id: orderId },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire('Thành công!', response.message, 'success')
+                                    .then(() => location.reload());
+                            } else {
+                                Swal.fire('Lỗi!', response.message, 'error');
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('Lỗi!', 'Có lỗi xảy ra khi hủy vé.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}
+
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+    
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+        border: none;
+    }
+    
+    .table td {
+        padding: 0.75rem 0.5rem;
+        border: none;
+    }
+    
+    .badge {
+        font-size: 0.85em;
+    }
+    
+    @@media print {
+        .btn, .card-header {
+            display: none !important;
+        }
+        
+        .card {
+            box-shadow: none !important;
+            border: 1px solid #ddd !important;
+        }
+    }
+</style>
