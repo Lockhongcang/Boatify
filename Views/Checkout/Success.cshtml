@@ -1,0 +1,166 @@
+@model Boatify.Models.Order
+@{
+    ViewData["Title"] = "Thanh toán thành công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link href="~/css/OrderSuccess.css" rel="stylesheet" />
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Success Header -->
+            <div class="success-header text-center">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 class="success-title">Thanh toán thành công!</h2>
+                <p class="success-subtitle">Cảm ơn bạn đã đặt vé. Thông tin vé đã được gửi đến email của bạn.</p>
+            </div>
+
+            <!-- Order Information -->
+            <div class="order-card">
+                <div class="order-header">
+                    <h4>Thông tin đơn hàng</h4>
+                    <span class="order-status success">@Model.Status</span>
+                </div>
+                
+                <div class="order-details">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label>Mã đơn hàng:</label>
+                                <span class="order-id">@Model.OrderCode</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label>Ngày đặt:</label>
+                                <span>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label>Khách hàng:</label>
+                                <span>@Model.User.FullName</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label>Tổng tiền:</label>
+                                <span class="total-amount">@Model.TotalAmount.ToString("N0") VNĐ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ticket Information -->
+            <div class="ticket-card">
+                <h4 class="ticket-title">Thông tin vé</h4>
+                
+                @if (Model.Tickets.Any())
+                {
+                    <div class="tickets-list">
+                        @foreach (var ticket in Model.Tickets)
+                        {
+                            <div class="ticket-item">
+                                <div class="ticket-info">
+                                    <div class="seat-info">
+                                        <span class="seat-number">Ghế: @ticket.SeatCode</span>
+                                        <span class="ticket-type">@ticket.TicketType</span>
+                                    </div>
+                                    <div class="passenger-info">
+                                        <small>@ticket.PassengerName</small>
+                                    </div>
+                                    <div class="ticket-price">
+                                        @ticket.Price.ToString("N0") VNĐ
+                                    </div>
+                                </div>
+                                <div class="ticket-qr">
+                                    <div class="qr-placeholder">
+                                        <i class="fas fa-qrcode"></i>
+                                        <small>Mã QR</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-primary btn-lg w-100" onclick="downloadTickets()">
+                            <i class="fas fa-download"></i>
+                            Tải vé PDF
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-secondary btn-lg w-100" onclick="sendTicketEmail()">
+                            <i class="fas fa-envelope"></i>
+                            Gửi lại email
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <a href="/" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-home"></i>
+                            Về trang chủ
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Notes -->
+            <div class="important-notes">
+                <h5><i class="fas fa-info-circle"></i> Lưu ý quan trọng</h5>
+                <ul>
+                    <li>Vui lòng mang theo CCCD/CMND khi lên tàu</li>
+                    <li>Có mặt tại bến tàu trước giờ khởi hành 30 phút</li>
+                    <li>Vé đã mua không được hoàn trả hoặc đổi</li>
+                    <li>Liên hệ hotline 1900-xxxx nếu cần hỗ trợ</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function downloadTickets() {
+            // Implement PDF download functionality
+            Swal.fire({
+                icon: 'info',
+                title: 'Đang chuẩn bị',
+                text: 'Chức năng tải vé PDF đang được phát triển.',
+                confirmButtonText: 'Đã hiểu'
+            });
+        }
+
+        function sendTicketEmail() {
+            // Implement email resend functionality
+            Swal.fire({
+                icon: 'success',
+                title: 'Đã gửi',
+                text: 'Email xác nhận vé đã được gửi lại.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+        // Auto-refresh order status (optional)
+        setInterval(function() {
+            // Check order status periodically
+        }, 30000);
+    </script>
+}

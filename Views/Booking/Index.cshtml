@@ -124,7 +124,7 @@
                     <div class="desktop-header d-none d-lg-flex justify-content-between align-items-center">
                         <div class="d-flex flex-column align-items-start">
                             <h4 class="sub-title pt-2">
-                                @Model.TicketBox.SelectedDeparture - @Model.TicketBox.SelectedDestination
+                                @Html.Raw(System.Net.WebUtility.HtmlDecode(Model.TicketBox.SelectedDeparture)) - @Html.Raw(System.Net.WebUtility.HtmlDecode(Model.TicketBox.SelectedDestination))
                                 <span class="sub-title">(@Model.Voyages.Count())</span>
                             </h4>
                             <div class="sort-section my-3 d-flex">
@@ -149,7 +149,7 @@
                         <div class="d-flex justify-content-between align-items-center w-100">
                             <div class="text-center w-100">
                                 <h4 class="sub-title mb-0">
-                                    @Model.TicketBox.SelectedDeparture - @Model.TicketBox.SelectedDestination
+                                    @Html.Raw(System.Net.WebUtility.HtmlDecode(Model.TicketBox.SelectedDeparture)) - @Html.Raw(System.Net.WebUtility.HtmlDecode(Model.TicketBox.SelectedDestination))
                                     <span class="sub-title">(@Model.Voyages.Count())</span>
                                 </h4>
                                 <p class="text-muted mb-0">
@@ -289,8 +289,8 @@
                                         </div>
                                     </div>
                                     <div class="col-12 d-flex justify-content-between mt-2">
-                                        <div class="location_title">@Model.TicketBox.SelectedDeparture</div>
-                                        <div class="location_title">@Model.TicketBox.SelectedDestination</div>
+                                        <div class="location_title">@Html.Raw(System.Net.WebUtility.HtmlDecode(Model.TicketBox.SelectedDeparture))</div>
+                                        <div class="location_title">@Html.Raw(System.Net.WebUtility.HtmlDecode(Model.TicketBox.SelectedDestination))</div>
                                     </div>
                                 </div>
 
