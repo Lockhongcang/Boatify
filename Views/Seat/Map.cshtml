@@ -79,7 +79,7 @@
                 <ul class="list-unstyled">
                     <li class="text-type d-flex justify-content-between">
                         <span>Tuyến tàu</span>
-                        <span class="title-modal">@ViewBag.Departure - @ViewBag.Destination</span>
+                        <span class="title-modal">@Html.Raw(System.Net.WebUtility.HtmlDecode(ViewBag.Departure?.ToString() ?? "")) - @Html.Raw(System.Net.WebUtility.HtmlDecode(ViewBag.Destination?.ToString() ?? ""))</span>
                     </li>
                     <li class="text-type d-flex justify-content-between">
                         <span>Thời gian xuất bến:</span>
@@ -361,12 +361,110 @@
         //     updateTotalPrice();
         // }
 
-        // function submitSeats() {
-        //     if (selectedSeats.size === 0) return alert("Bạn chưa chọn ghế nào.");
-        //     alert("Bạn đã chọn: " + [...selectedSeats].join(', '));
-        // }
+        // Submit seats and proceed to checkout
+        function submitSeats() {
+            if (selectedSeats.size === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Chưa chọn ghế',
+                    text: 'Vui lòng chọn ít nhất một ghế trước khi thanh toán.',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                return;
+            }
+
+            // Validate passenger information
+            let isValid = true;
+            let missingInfo = [];
+
+            selectedSeats.forEach(code => {
+                const nameInput = document.getElementById(`name-${code}`);
+                const phoneInput = document.querySelector(`[name="phone-${code}"]`);
+                const dobInput = document.querySelector(`[name="dob-${code}"]`);
+                const cccdInput = document.getElementById(`id-${code}`);
+
+                if (!nameInput?.value.trim()) {
+                    missingInfo.push(`Ghế ${code}: Thiếu họ tên`);
+                    isValid = false;
+                }
+                if (!phoneInput?.value.trim()) {
+                    missingInfo.push(`Ghế ${code}: Thiếu số điện thoại`);
+                    isValid = false;
+                }
+                if (!dobInput?.value.trim()) {
+                    missingInfo.push(`Ghế ${code}: Thiếu ngày sinh`);
+                    isValid = false;
+                }
+                if (!cccdInput?.value.trim()) {
+                    missingInfo.push(`Ghế ${code}: Thiếu CCCD`);
+                    isValid = false;
+                }
+            });
+
+            if (!isValid) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thông tin chưa đầy đủ',
+                    html: missingInfo.join('<br>'),
+                    confirmButtonText: 'Đã hiểu'
+                });
+                return;
+            }
+
+            // Prepare booking data
+            const bookingData = {
+                voyageId: @(ViewBag.VoyageId ?? 0),
+                scheduleId: @(ViewBag.ScheduleId ?? 0),
+                routeId: @(ViewBag.RouteId ?? 0),
+                departDate: '@(ViewBag.Date?.ToString("yyyy-MM-dd") ?? "")',
+                departure: '@(ViewBag.Departure ?? "")',
+                destination: '@(ViewBag.Destination ?? "")',
+                selectedSeats: Array.from(selectedSeats).map(code => {
+                    const seat = seats.find(s => s.SeatNm === code);
+                    return {
+                        seatId: seat.SeatId,
+                        seatCode: code,
+                        name: document.getElementById(`name-${code}`).value.trim(),
+                        phone: document.querySelector(`[name="phone-${code}"]`).value.trim(),
+                        dob: document.querySelector(`[name="dob-${code}"]`).value.trim(),
+                        cccd: document.getElementById(`id-${code}`).value.trim(),
+                        price: seat.TicketPriceWithVAT || 0
+                    };
+                }),
+                totalAmount: calculateTotalAmount()
+            };
+
+            // Store booking data in sessionStorage and redirect to checkout
+            sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
+            window.location.href = '/Checkout/Index';
+        }
+
+        function calculateTotalAmount() {
+            let total = 0;
+            selectedSeats.forEach(code => {
+                const seat = seats.find(s => s.SeatNm === code);
+                if (!seat) return;
+
+                let multiplier = 1;
+                const dobInput = document.querySelector(`[name="dob-${code}"]`);
+                if (dobInput?.value) {
+                    const age = calculateAge(new Date(dobInput.value));
+                    if (age <= 11) multiplier = 0.5;
+                    else if (age >= 60) multiplier = 0.8;
+                }
+                total += (seat.TicketPriceWithVAT || 0) * multiplier;
+            });
+            return total;
+        }
 
         const seats = @Html.Raw(seatsJson); // Serialize Model data to JS
+
+        // Make submitSeats function globally available
+        window.submitSeats = submitSeats;
 
         function renderSeatMap(data) {
                 const deckMain = document.getElementById("deck-main-grid");

@@ -1,11 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Views\NewFolder1\**" />
     <Compile Remove="Views\NewFolder2\**" />
@@ -16,7 +15,6 @@
     <None Remove="Views\NewFolder1\**" />
     <None Remove="Views\NewFolder2\**" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Remove="C:\Users\tlox31\.nuget\packages\tempusdominus\6.10.1\contentFiles\any\any\wwwroot\css\tempus-dominus.css" />
     <Content Remove="C:\Users\tlox31\.nuget\packages\tempusdominus\6.10.1\contentFiles\any\any\wwwroot\css\tempus-dominus.css.map" />
@@ -28,7 +26,6 @@
     <Content Remove="C:\Users\tlox31\.nuget\packages\tempusdominus\6.10.1\contentFiles\any\any\wwwroot\js\tempus-dominus.js.map" />
     <Content Remove="C:\Users\tlox31\.nuget\packages\tempusdominus\6.10.1\contentFiles\any\any\wwwroot\js\tempus-dominus.min.js" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="bootstrap" Version="5.3.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.5" />
@@ -48,5 +45,4 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="TempusDominus" Version="6.10.1" />
   </ItemGroup>
-
 </Project>

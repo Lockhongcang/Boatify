@@ -1,0 +1,316 @@
+/* Checkout Page Styles */
+.checkout-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+.checkout-title {
+    color: #1f2937;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.checkout-sidebar {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    position: sticky;
+    top: 20px;
+}
+
+.sidebar-title {
+    color: #1f2937;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+/* Trip Information */
+.trip-info {
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.trip-route {
+    color: #1f2937;
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.trip-date {
+    color: #6b7280;
+    margin-bottom: 0;
+}
+
+.seat-count {
+    background: #10b981;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Passenger List */
+.passenger-list {
+    margin-top: 20px;
+}
+
+.passenger-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.passenger-item:last-child {
+    border-bottom: none;
+}
+
+.price {
+    color: #10b981;
+    font-weight: 600;
+}
+
+/* Payment Methods */
+.payment-methods {
+    display: grid;
+    gap: 12px;
+}
+
+.payment-method {
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.payment-method:hover {
+    border-color: #10b981;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+}
+
+.payment-method.active {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+.payment-method input[type="radio"] {
+    display: none;
+}
+
+.payment-label {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    margin: 0;
+    cursor: pointer;
+    width: 100%;
+}
+
+.payment-icon {
+    width: 48px;
+    height: 48px;
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.payment-icon img {
+    max-width: 32px;
+    max-height: 32px;
+}
+
+.payment-info h6 {
+    margin: 0 0 4px 0;
+    color: #1f2937;
+    font-weight: 600;
+}
+
+.payment-info p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Order Details */
+.order-details {
+    margin-bottom: 20px;
+}
+
+.route-info {
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+.seat-info {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Total Section */
+.total-section {
+    padding: 16px 0;
+}
+
+.total-section > div {
+    margin-bottom: 8px;
+}
+
+.total-amount {
+    font-size: 18px;
+    color: #1f2937;
+}
+
+/* Terms Section */
+.terms-section {
+    margin: 20px 0;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+
+.terms-section .form-check-label {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.terms-section a {
+    color: #10b981;
+    text-decoration: none;
+}
+
+.terms-section a:hover {
+    text-decoration: underline;
+}
+
+/* Security Info */
+.security-info {
+    text-align: center;
+    padding: 12px;
+    background: #f0fdf4;
+    border-radius: 6px;
+}
+
+.security-info i {
+    color: #10b981;
+    margin-right: 8px;
+}
+
+/* Form Validation */
+.form-control.is-valid {
+    border-color: #10b981;
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+.form-control.is-invalid {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25);
+}
+
+/* Button Styles */
+.btn-primary {
+    background: #10b981;
+    border-color: #10b981;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #059669;
+    border-color: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-primary:disabled {
+    background: #9ca3af;
+    border-color: #9ca3af;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .checkout-card,
+    .checkout-sidebar {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .payment-label {
+        padding: 12px;
+    }
+    
+    .payment-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+    }
+    
+    .payment-icon img {
+        max-width: 24px;
+        max-height: 24px;
+    }
+    
+    .trip-route {
+        font-size: 16px;
+    }
+    
+    .total-amount {
+        font-size: 16px;
+    }
+}
+
+/* Loading States */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.checkout-card,
+.checkout-sidebar {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Success/Error States */
+.alert-success {
+    background: #f0fdf4;
+    border-color: #10b981;
+    color: #065f46;
+}
+
+.alert-danger {
+    background: #fef2f2;
+    border-color: #ef4444;
+    color: #991b1b;
+}

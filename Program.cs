@@ -8,13 +8,13 @@ builder.Services
     .AddControllersWithViews()
     .AddNewtonsoftJson();
 
-
-builder.Services.AddControllersWithViews()
-    .AddNewtonsoftJson();
 builder.Services.AddSession();
 builder.Services.AddRazorPages();
 
 builder.Services.AddHttpClient<BookingService>();
+builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<DatabaseInitializer>();
+builder.Services.AddScoped<OrderIntegrationService>();
 
 builder.Services.AddDbContext<BoatifyContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BoatifyConnection")));
@@ -27,6 +27,13 @@ builder.Services.AddAuthentication("AuthCookie")
     });
 
 var app = builder.Build();
+
+// Initialize database
+using (var scope = app.Services.CreateScope())
+{
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
+    await dbInitializer.InitializeAsync();
+}
 
 if (!app.Environment.IsDevelopment())
 {
