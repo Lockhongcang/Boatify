@@ -142,7 +142,10 @@
                                     <a class="nav-link @(controller == "Home" ? "active" : "")"
                                        asp-controller="Home" asp-action="Index">TRANG CHỦ</a>
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="#">LỊCH TRÌNH</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(controller == "Schedule" ? "active" : "")"
+                                       asp-controller="Schedule" asp-action="Index">LỊCH TRÌNH</a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link @(controller == "Booking" ? "active" : "")"
                                        asp-controller="Booking" asp-action="Index">TRA CỨU VÉ</a>

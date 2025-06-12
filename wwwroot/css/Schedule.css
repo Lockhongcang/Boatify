@@ -1,0 +1,35 @@
+﻿@import url("global.css");
+
+.navbar__container {
+    height: fit-content !important;
+}
+
+section {
+    padding: 0 !important;
+}
+
+.trip-dropdown {
+    max-height: fit-content !important;
+    overflow: hidden;
+}
+
+.trip-title {
+    background: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+}
+
+.trip-name {
+    color: var(--primary-color-white);
+    font-weight: 600;
+}
+
+/* Icon toggle */
+.schedule-cards .toggle-voyages .toggle-icon {
+    font-size: 1.5rem;
+    transition: transform 0.2s ease;
+}
+/* Khi mở, xoay icon 180° */
+.schedule-cards .trip-card.open .toggle-icon {
+    transform: rotate(180deg);
+}

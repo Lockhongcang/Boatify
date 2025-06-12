@@ -1,0 +1,71 @@
+﻿@model List<Boatify.Models.Dto.RouteResult>
+@{
+    ViewData["Title"] = "Lịch trình trong ngày";
+    var today = ViewBag.Date as string ?? DateTime.Today.ToString("yyyy-MM-dd");
+}
+@section Styles {
+    <link href="~/css/Schedule.css" rel="stylesheet" />
+}
+<section class="schedule_section">
+    <div class="container p-0 my-4">
+        <div class="text-center">
+            <h4 class="title">LỊCH TRÌNH (@today)</h4>
+            <p>Được cập nhật hàng ngày</p>
+        </div>
+        <div class="schedule-cards">
+            @foreach (var r in Model)
+            {
+                <div class="trip-card mb-3" data-route="@r.RouteId">
+                    <div class="trip-header d-flex justify-content-between align-items-center">
+                        <div class="trip-title">
+                            <div class="trip-name m-0">
+                                @r.DeparturePortName - @r.ArrivalPortName
+                            </div>
+                        </div>
+
+                        <button class="btn btn-link toggle-voyages p-0">
+                            <span class="material-symbols-rounded toggle-icon">expand_more</span>
+                        </button>
+                    </div>
+                    <div class="trip-dropdown" style="display:none;">
+                        <div class="voyage-list p-2"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(function(){
+          $('.toggle-voyages').click(function(){
+            var btn   = $(this),
+                card  = btn.closest('.trip-card'),
+                id    = card.data('route'),
+                drop  = card.find('.trip-dropdown'),
+                icon  = btn.find('.toggle-icon');
+
+            if (drop.is(':visible')) {
+              drop.slideUp();
+              icon.text('expand_more');
+            }
+            else {
+              if (!drop.data('loaded')) {
+                $.get('@Url.Action("Voyages", "Schedule")', { routeId:id, date:'@today' })
+                 .done(function(html){
+                   drop.find('.voyage-list').html(html);
+                   drop.data('loaded', true);
+                   drop.slideDown();
+                   icon.text('close');
+                 });
+              }
+              else {
+                drop.slideDown();
+                icon.text('close');
+              }
+            }
+          });
+        });
+    </script>
+}

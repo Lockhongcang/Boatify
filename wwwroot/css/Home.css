@@ -314,7 +314,7 @@ section {
 
 .trip-card:hover .trip-dropdown {
     max-height: 70px;
-    padding-top: 0.5rem;
+/*    padding-top: 0.5rem;*/
 }
 
 .time-expected {

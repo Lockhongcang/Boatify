@@ -1,0 +1,39 @@
+﻿@model List<Boatify.Models.Dto.VoyageResult>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning m-2">
+        Không có chuyến nào trong ngày.
+    </div>
+}
+else
+{
+    <table class="table mb-0">
+        <thead>
+            <tr>
+                <th>Loại tàu</th>
+                <th>Tên tàu</th>
+                <th>Số ghế còn lại</th>
+                <th>Thời gian hành trình</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var v in Model)
+            {
+                <tr class="@(v.Disabled ? "text-muted" : "")">
+                    <td>@v.BoatTypeNm</td>
+                    <td>@v.BoatNm</td>
+                    <td>@v.NoOfRemain</td>
+                    <td>@v.Time</td>
+                    <td>
+                        <a href="@Url.Action("Select","Booking", new { voyageId = v.VoyageId })"
+                           class="btn btn-primary-custom">
+                            Chọn chuyến
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

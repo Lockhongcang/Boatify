@@ -187,13 +187,24 @@ button:hover, input:hover, select:hover {
 }
 
 .btn-link {
-    color: var(--primary-color);
+    color: var(--primary-color) !important;
     font-size: 0.9rem;
     text-decoration: none;
 }
 
 .btn-link:hover {
     text-decoration: underline;
+}
+
+.btn-primary-custom{
+    background-color: var(--primary-disabled) !important;
+    color: var(--primary-color) !important;
+    border-radius: 2rem !important;
+}
+
+.btn-primary-custom:hover {
+    background-color: var(--primary-color) !important;
+    color: var(--primary-color-light) !important;
 }
 
 .cancel-button {
